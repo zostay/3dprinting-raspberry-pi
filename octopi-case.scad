@@ -3,17 +3,23 @@ cutout_offset=-cutout_depth/2;
 
 ethernet_width=16;
 ethernet_height=13.5;
+ethernet_offset=1;
 
 audio_jack_width=7;
+audio_jack_offset=53;
 
 usb_width=15;
 usb_height=15.6;
+usb1_offset=20;
+usb2_offset=38;
 
 hdmi_width=15;
 hdmi_height=5.5;
+hdmi_offset=24;
 
 micro_usb_width=8;
 micro_usb_height=3;
+micro_usb_offset=6;
 
 m2_5_screw_width=2.5;
 m2_5_spacer_width=m2_5_screw_width*2;
@@ -78,26 +84,26 @@ union() {
         union() {
             cube([rpi_bounding_length, rpi_bounding_width, rpi_bounding_height+cutout_depth]);
 
-            translate([rpi_screw_origin_length,rpi_screw_origin_width,0])
-            union() {
-                translate([0,0,0]) m2_5_screw_hole();
-                translate([0,rpi_screw_offset_width,0]) m2_5_screw_hole();
-                translate([rpi_screw_offset_length,0,0]) m2_5_screw_hole();
-                translate([rpi_screw_offset_length,rpi_screw_offset_width,0]) m2_5_screw_hole();
-            }
+            // translate([rpi_screw_origin_length,rpi_screw_origin_width,0])
+            // union() {
+            //     translate([0,0,0]) m2_5_screw_hole();
+            //     translate([0,rpi_screw_offset_width,0]) m2_5_screw_hole();
+            //     translate([rpi_screw_offset_length,0,0]) m2_5_screw_hole();
+            //     translate([rpi_screw_offset_length,rpi_screw_offset_width,0]) m2_5_screw_hole();
+            // }
 
             translate([0,0,m2_5_spacer_height])
             union() {
-                translate([rpi_bounding_length+cutout_offset,1,0]) ethernet();
+                translate([rpi_bounding_length+cutout_offset,ethernet_offset,0]) ethernet();
 
-                translate([rpi_bounding_length+cutout_offset,20,0]) usb();
-                translate([rpi_bounding_length+cutout_offset,38,0]) usb();
+                translate([rpi_bounding_length+cutout_offset,usb1_offset,0]) usb();
+                translate([rpi_bounding_length+cutout_offset,usb2_offset,0]) usb();
 
-                translate([86-33,0,0]) audio_jack();
+                translate([audio_jack_offset,0,0]) audio_jack();
 
-                translate([86-47-15,0,0]) hdmi();
+                translate([hdmi_offset,0,0]) hdmi();
 
-                translate([6,0,0]) micro_usb();
+                translate([micro_usb_offset,0,0]) micro_usb();
             }
         }
     }
