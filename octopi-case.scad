@@ -95,8 +95,19 @@ module rpi3bplus_lid() {
     attachment();
 }
 
+module hanger() {
+    difference() {
+        cube([60,6,9]);
+
+        translate([3,0,0]) cube([60,3,6]);
+    }
+
+    cube([15,3,3]);
+}
+
 union() {
     rpi3bplus_main_body();
     rpi3bplus_lid();
+    translate([10,case_width,0]) hanger();
 }
 
