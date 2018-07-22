@@ -25,9 +25,11 @@ micro_usb_offset=7.5;
 m2_5_screw_width=2.5;
 m2_5_spacer_width=m2_5_screw_width*2;
 m2_5_spacer_height=5;
-pcb_thickness=2;
 
-rpi_bounding_height=18;
+rpi_below_board=4;
+rpi_pcb_thickness=2;
+rpi_above_board=22;
+rpi_bounding_height=rpi_above_board+rpi_pcb_thickness;
 rpi_bounding_length=87;
 rpi_bounding_width=58;
 
@@ -37,7 +39,7 @@ rpi_screw_offset_length=58;
 rpi_screw_offset_width=49;
 
 wall_thickness=3;
-case_height=rpi_bounding_height+wall_thickness*2+pcb_thickness+2;
+case_height=rpi_bounding_height+wall_thickness*2+rpi_pcb_thickness+2;
 
 module ethernet() {
     cube([cutout_depth,ethernet_width,ethernet_height]);
@@ -103,7 +105,7 @@ union() {
 
         translate([wall_thickness,wall_thickness,wall_thickness])
         union() {
-            cube([rpi_bounding_length, rpi_bounding_width, rpi_bounding_height+cutout_depth]);
+            cube([rpi_bounding_length, rpi_bounding_width, rpi_bounding_height]);
 
             // translate([rpi_screw_origin_length,rpi_screw_origin_width,0])
             // union() {
@@ -113,7 +115,7 @@ union() {
             //     translate([rpi_screw_offset_length,rpi_screw_offset_width,0]) m2_5_screw_hole();
             // }
 
-            translate([0,0,m2_5_spacer_height+pcb_thickness])
+            translate([0,0,m2_5_spacer_height+rpi_pcb_thickness])
             union() {
                 translate([rpi_bounding_length+cutout_offset,ethernet_offset,0]) ethernet();
 
