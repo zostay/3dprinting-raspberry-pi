@@ -39,6 +39,8 @@ rpi_screw_offset_length=58;
 rpi_screw_offset_width=49;
 
 wall_thickness=3;
+case_length=rpi_bounding_length+wall_thickness*2;
+case_width=rpi_bounding_width+wall_thickness*2;
 case_height=rpi_bounding_height+wall_thickness*2;
 
 etch_depth=1;
@@ -53,6 +55,18 @@ label_usb_offset=35;
 label_dash1_adjust=12;
 label_dash2_adjust=10;
 label_dash_raise=1.5;
+
+camera_cable_width=20;
+camera_cable_thickness=4;
+camera_length_offset=43;
+camera_width_offset=2;
+
+function case_wall_thickness() = wall_thickness;
+function case_dimensions() = [case_length,case_width,case_height];
+
+module camera() {
+    cube([camera_cable_thickness,camera_cable_width,cutout_depth]);
+}
 
 module ethernet() {
     cube([cutout_depth,ethernet_width,ethernet_height]);
@@ -108,80 +122,86 @@ module m2_5_spacer() {
     }
 }
 
-union() {
-    difference() {
-        cube([
-            rpi_bounding_length+wall_thickness*2,
-            rpi_bounding_width+wall_thickness*2,
-            case_height
-        ]);
+module rpi3bplus(camera_hole=false) {
+    union() {
+        difference() {
+            cube([
+                rpi_bounding_length+wall_thickness*2,
+                rpi_bounding_width+wall_thickness*2,
+                case_height
+            ]);
 
-        translate([wall_thickness,wall_thickness,wall_thickness])
-        union() {
-            cube([rpi_bounding_length, rpi_bounding_width, rpi_bounding_height]);
-
-            // translate([rpi_screw_origin_length,rpi_screw_origin_width,0])
-            // union() {
-            //     translate([0,0,0]) m2_5_screw_hole();
-            //     translate([0,rpi_screw_offset_width,0]) m2_5_screw_hole();
-            //     translate([rpi_screw_offset_length,0,0]) m2_5_screw_hole();
-            //     translate([rpi_screw_offset_length,rpi_screw_offset_width,0]) m2_5_screw_hole();
-            // }
-
-            translate([0,0,m2_5_spacer_height+rpi_pcb_thickness])
+            translate([wall_thickness,wall_thickness,wall_thickness])
             union() {
-                translate([rpi_bounding_length+cutout_offset,ethernet_offset,0]) ethernet();
+                cube([rpi_bounding_length, rpi_bounding_width, rpi_bounding_height]);
 
-                translate([rpi_bounding_length+cutout_offset,usb1_offset,0]) usb();
-                translate([rpi_bounding_length+cutout_offset,usb2_offset,0]) usb();
+                // translate([rpi_screw_origin_length,rpi_screw_origin_width,0])
+                // union() {
+                //     translate([0,0,0]) m2_5_screw_hole();
+                //     translate([0,rpi_screw_offset_width,0]) m2_5_screw_hole();
+                //     translate([rpi_screw_offset_length,0,0]) m2_5_screw_hole();
+                //     translate([rpi_screw_offset_length,rpi_screw_offset_width,0]) m2_5_screw_hole();
+                // }
 
-                translate([audio_jack_offset,0,0]) audio_jack();
-
-                translate([hdmi_offset,0,0]) hdmi();
-
-                translate([micro_usb_offset,0,0]) micro_usb();
-            }
-        }
-
-        translate([0,0,case_height-etch_depth])
-        union() {
-            linear_extrude(height=etch_depth+1) {
-                translate([etch_edge_offset+label_power_offset,etch_edge_offset,0]) text("Power", size=etch_size);
-                translate([etch_edge_offset+label_hdmi_offset,etch_edge_offset,0]) text("HDMI", size=etch_size);
-                translate([etch_edge_offset+label_audio_offset,etch_edge_offset,0]) text("Audio", size=etch_size);
-
-                translate([rpi_bounding_length+wall_thickness*2,0,0])
+                translate([0,0,m2_5_spacer_height+rpi_pcb_thickness])
                 union() {
-                    translate([-etch_edge_offset,etch_edge_offset+label_ethernet_offset,0])
-                    rotate([0,0,90])
-                    text("Ethernet", size=etch_size);
+                    translate([rpi_bounding_length+cutout_offset,ethernet_offset,0]) ethernet();
 
-                    translate([-etch_edge_offset,etch_edge_offset+label_usb_offset,0])
-                    rotate([0,0,90])
-                    text("USB", size=etch_size);
+                    translate([rpi_bounding_length+cutout_offset,usb1_offset,0]) usb();
+                    translate([rpi_bounding_length+cutout_offset,usb2_offset,0]) usb();
 
-                    translate([-etch_edge_offset,etch_edge_offset,0])
+                    translate([audio_jack_offset,0,0]) audio_jack();
+
+                    translate([hdmi_offset,0,0]) hdmi();
+
+                    translate([micro_usb_offset,0,0]) micro_usb();
+
+                    if (camera_hole) {
+                        translate([camera_length_offset,camera_width_offset,case_height/2])
+                        camera();
+                    }
+                }
+            }
+
+            translate([0,0,case_height-etch_depth])
+            union() {
+                linear_extrude(height=etch_depth+1) {
+                    translate([etch_edge_offset+label_power_offset,etch_edge_offset,0]) text("Power", size=etch_size);
+                    translate([etch_edge_offset+label_hdmi_offset,etch_edge_offset,0]) text("HDMI", size=etch_size);
+                    translate([etch_edge_offset+label_audio_offset,etch_edge_offset,0]) text("Audio", size=etch_size);
+
+                    translate([rpi_bounding_length+wall_thickness*2,0,0])
                     union() {
-                        translate([-label_dash_raise,label_usb_offset-label_dash1_adjust,0]) square([1,10]);
-                        translate([-label_dash_raise,label_usb_offset+label_dash2_adjust,0]) square([1,10]);
+                        translate([-etch_edge_offset,etch_edge_offset+label_ethernet_offset,0])
+                        rotate([0,0,90])
+                        text("Ethernet", size=etch_size);
+
+                        translate([-etch_edge_offset,etch_edge_offset+label_usb_offset,0])
+                        rotate([0,0,90])
+                        text("USB", size=etch_size);
+
+                        translate([-etch_edge_offset,etch_edge_offset,0])
+                        union() {
+                            translate([-label_dash_raise,label_usb_offset-label_dash1_adjust,0]) square([1,10]);
+                            translate([-label_dash_raise,label_usb_offset+label_dash2_adjust,0]) square([1,10]);
+                        }
                     }
                 }
             }
         }
-    }
 
-    translate([
-        rpi_screw_origin_length+wall_thickness,
-        rpi_screw_origin_width+wall_thickness,
-        wall_thickness
-    ])
-    union() {
-        translate([0,0,0]) m2_5_spacer();
-        translate([0,rpi_screw_offset_width,0]) m2_5_spacer();
-        translate([rpi_screw_offset_length,0,0]) m2_5_spacer();
-        translate([rpi_screw_offset_length,rpi_screw_offset_width,0]) m2_5_spacer();
+        translate([
+            rpi_screw_origin_length+wall_thickness,
+            rpi_screw_origin_width+wall_thickness,
+            wall_thickness
+        ])
+        union() {
+            translate([0,0,0]) m2_5_spacer();
+            translate([0,rpi_screw_offset_width,0]) m2_5_spacer();
+            translate([rpi_screw_offset_length,0,0]) m2_5_spacer();
+            translate([rpi_screw_offset_length,rpi_screw_offset_width,0]) m2_5_spacer();
+        }
     }
 }
 
-//translate([3,0,17])
-//cube([4, 60, 3]);
+rpi3bplus(camera_hole=true);
