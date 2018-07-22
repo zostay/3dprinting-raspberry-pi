@@ -13,9 +13,10 @@ usb_height=15.6;
 usb1_offset=21.5;
 usb2_offset=39.5;
 
+hdmi_angle_width=2;
 hdmi_width=15;
 hdmi_height=5.5;
-hdmi_offset=25.5;
+hdmi_offset=25;
 
 micro_usb_width=8;
 micro_usb_height=3;
@@ -52,7 +53,26 @@ module micro_usb() {
 }
 
 module hdmi() {
-    translate([0,-cutout_depth/2,0]) cube([hdmi_width,cutout_depth,hdmi_height]);
+    translate([0,-cutout_depth/2,0]) difference() {
+        cube([hdmi_width,cutout_depth,hdmi_height]);
+        union() {
+            translate([0,cutout_depth/2,0])
+            rotate([90,0,0])
+            linear_extrude(h=cutout_depth+2) {
+                polygon([
+                    [0,0],[0,hdmi_angle_width],[hdmi_angle_width,0]
+                ]);
+            }
+
+            translate([hdmi_width-hdmi_angle_width,cutout_depth/2,0])
+            rotate([90,0,0])
+            linear_extrude(h=cutout_depth+2) {
+                polygon([
+                    [0,0],[hdmi_angle_width,0],[hdmi_angle_width, hdmi_angle_width]
+                ]);
+            }
+        }
+    }
 }
 
 module audio_jack() {
