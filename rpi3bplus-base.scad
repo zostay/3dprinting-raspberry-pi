@@ -55,6 +55,8 @@ label_usb_offset=35;
 label_dash1_adjust=12;
 label_dash2_adjust=10;
 label_dash_raise=1.5;
+label_camera_offset=42;
+label_camera_edge_offset=5;
 
 camera_cable_width=20;
 camera_cable_thickness=4;
@@ -169,6 +171,12 @@ module rpi3bplus(camera_hole=false) {
                     translate([etch_edge_offset+label_power_offset,etch_edge_offset,0]) text("Power", size=etch_size);
                     translate([etch_edge_offset+label_hdmi_offset,etch_edge_offset,0]) text("HDMI", size=etch_size);
                     translate([etch_edge_offset+label_audio_offset,etch_edge_offset,0]) text("Audio", size=etch_size);
+
+                    if (camera_hole) {
+                        translate([etch_edge_offset+label_camera_offset,etch_edge_offset+label_camera_edge_offset,0])
+                        rotate([0,0,90])
+                        text("Camera", size=etch_size);
+                    }
 
                     translate([rpi_bounding_length+wall_thickness*2,0,0])
                     union() {
