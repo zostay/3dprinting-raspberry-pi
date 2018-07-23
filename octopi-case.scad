@@ -97,12 +97,12 @@ module rpi3bplus_lid() {
 
 module hanger() {
     difference() {
-        cube([60,6,9]);
+        cube([60,13,9]);
 
-        translate([3,0,0]) cube([60,3,6]);
+        translate([3,0,0]) cube([60,10,6]);
     }
 
-    cube([15,3,3]);
+    cube([15,10,3]);
 }
 
 union() {
