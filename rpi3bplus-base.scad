@@ -138,6 +138,25 @@ module screw_driver_hole() {
     cylinder(d=screw_driver_width,h=cutout_depth*2,$fn=10,center=true);
 }
 
+module screw_driver_hole_rails() {
+    cube([rail_width,case_width,rail_depth]);
+    translate([screw_driver_width+rail_width,0,0]) cube([rail_width,case_width,rail_depth]);
+    difference() {
+        translate([0,0,rail_depth-rail_bridge_depth]) cube([screw_driver_width+rail_width*2,case_width,rail_bridge_depth]);
+
+        translate([
+            0,
+            rpi_screw_origin_width+wall_thickness,
+            0
+        ])
+        union() {
+            center_x = (rail_width*2+screw_driver_width)/2;
+            translate([center_x,0,0]) screw_driver_hole();
+            translate([center_x,rpi_screw_offset_width,0]) screw_driver_hole();
+        }
+    }
+}
+
 module m2_5_spacer() {
     translate([0,0,m2_5_spacer_height/2])
     difference() {
@@ -184,7 +203,6 @@ module rpi3bplus(camera_hole=false) {
                         translate([camera_length_offset,camera_width_offset,case_height/2])
                         camera();
                     }
-
                 }
 
                 translate([
@@ -245,9 +263,16 @@ module rpi3bplus(camera_hole=false) {
             translate([rpi_screw_offset_length,rpi_screw_offset_width,0]) m2_5_spacer();
         }
 
+        // Special bridging for the camera hole
         if (camera_hole) {
-            #translate([wall_thickness+camera_length_offset-rail_width,0,case_height-wall_thickness-rail_depth])
+            translate([wall_thickness+camera_length_offset-rail_width,0,case_height-wall_thickness-rail_depth])
             camera_rails();
+        }
+
+        // Special bridging for the screw driver holes
+        translate([-rail_width/2,0,case_height-wall_thickness-rail_depth]) {
+            #translate([rpi_screw_origin_length,0,0]) screw_driver_hole_rails();
+            #translate([rpi_screw_origin_length+rpi_screw_offset_length,0,0]) screw_driver_hole_rails();
         }
     }
 }
