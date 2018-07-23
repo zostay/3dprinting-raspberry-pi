@@ -1,9 +1,9 @@
-use <rounded-cube.scad>;
-
 shelf_thickness=1.6;
 shelf_cutout_width=10;
 shelf_cutout_height=16;
 shelf_cutout_space=60;
+
+function shelf_cutout_dimensions() = [shelf_cutout_height,shelf_cutout_width,shelf_thickness];
 
 shelf_cutout_height_tolerance=0.5;
 
@@ -13,6 +13,9 @@ backplate_adjust=12;
 backplate_width=shelf_cutout_width-width_fudge;
 backplate_height=shelf_cutout_space*1.75;
 backplate_thickness=6;
+
+function hook_backplate_dimensions() = [backplate_height,backplate_width,backplate_thickness];
+function hook_backplate_hook_dimensions() = [backplate_adjust,backplate_width,backplate_thickness/2];
 
 clip_thickness=3;
 clip_width=shelf_cutout_width-width_fudge;
@@ -58,18 +61,22 @@ module clip() {
 }
 
 
-union() {
-    translate([0,-backplate_adjust,0])
-    difference() {
-        cube([backplate_thickness, backplate_height, backplate_width]);
-
-        translate([backplate_thickness/2,-2,-1])
-        cube([backplate_thickness/2+2, backplate_adjust+2, backplate_width+2]);
-    }
-
-    translate([backplate_thickness,0,0])
+module hook() {
     union() {
-        clip();
-        translate([0,clip_downshift,0]) clip();
+        translate([0,-backplate_adjust,0])
+        difference() {
+            cube([backplate_thickness, backplate_height, backplate_width]);
+
+            translate([backplate_thickness/2,-2,-1])
+            cube([backplate_thickness/2+2, backplate_adjust+2, backplate_width+2]);
+        }
+
+        translate([backplate_thickness,0,0])
+        union() {
+            clip();
+            translate([0,clip_downshift,0]) clip();
+        }
     }
 }
+
+hook();

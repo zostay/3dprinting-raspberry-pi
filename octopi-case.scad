@@ -1,4 +1,5 @@
 use <./rpi3bplus-base.scad>;
+use <./octopi-hook.scad>;
 
 perforation_length_offset=3;
 
@@ -19,6 +20,12 @@ socket_join_fudge=0.2;
 
 attachment_height=2;
 attachment_length=5;
+
+hanger_hook_width=shelf_cutout_dimensions().y;
+hanger_hook_depth=hook_backplate_dimensions().z;
+hanger_hook_height=60;
+hanger_hook_clip_thickness=hook_backplate_dimensions().z - hook_backplate_hook_dimensions().z;
+hanger_hook_clip_depth=hook_backplate_hook_dimensions().x;
 
 module case_split(join_fudge) {
     module upright_triangle_cutout() {
@@ -97,12 +104,12 @@ module rpi3bplus_lid() {
 
 module hanger() {
     difference() {
-        cube([60,13,9]);
+        cube([hanger_hook_height,hanger_hook_width+wall_thickness,hanger_hook_depth+wall_thickness]);
 
-        translate([3,0,0]) cube([60,10,6]);
+        translate([wall_thickness,0,0]) cube([hanger_hook_height,hanger_hook_width,hanger_hook_depth]);
     }
 
-    cube([15,10,3]);
+    cube([wall_thickness+hanger_hook_clip_depth,hanger_hook_width,hanger_hook_clip_thickness]);
 }
 
 union() {
