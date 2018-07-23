@@ -1,6 +1,3 @@
-cutout_depth=10;
-cutout_offset=-cutout_depth/2;
-
 sdc_overhang=3; // actual overhang is 2.6
 
 ethernet_width=16;
@@ -24,11 +21,18 @@ micro_usb_width=8;
 micro_usb_height=3;
 micro_usb_offset=7.5;
 
-m2_5_screw_width=2.5;
-m2_5_spacer_width=m2_5_screw_width*2;
-m2_5_spacer_height=5;
-
 screw_driver_width=4;
+
+extra_length=10;
+extra_width=10;
+extra_height=0;
+
+function extra_dimensions() = [extra_length,extra_width,extra_height];
+
+wall_thickness=4;
+
+cutout_depth=wall_thickness*3;
+cutout_offset=-cutout_depth/2;
 
 rpi_below_board=5;
 rpi_pcb_thickness=2;
@@ -37,15 +41,28 @@ rpi_bounding_height=rpi_below_board+rpi_above_board+rpi_pcb_thickness;
 rpi_bounding_length=87+sdc_overhang;
 rpi_bounding_width=58;
 
+rpi_origin_length=extra_length+wall_thickness;
+rpi_origin_width=wall_thickness;
+rpi_origin_height=wall_thickness+rpi_below_board;
+
+function rpi_origin() = [rpi_origin_length,rpi_origin_width,rpi_origin_height];
+
+m2_5_screw_width=2.5;
+m2_5_spacer_width=m2_5_screw_width*2;
+m2_5_spacer_height=rpi_origin_height-wall_thickness;
+
+case_int_length=rpi_bounding_length+extra_length;
+case_int_width=rpi_bounding_width+extra_width;
+case_int_height=rpi_bounding_height+extra_height;
+
 rpi_screw_origin_length=4+sdc_overhang;
 rpi_screw_origin_width=4;
 rpi_screw_offset_length=58;
 rpi_screw_offset_width=49;
 
-wall_thickness=4;
-case_length=rpi_bounding_length+wall_thickness*2;
-case_width=rpi_bounding_width+wall_thickness*2;
-case_height=rpi_bounding_height+wall_thickness*2;
+case_length=case_int_length+wall_thickness*2;
+case_width=case_int_width+wall_thickness*2;
+case_height=case_int_height+wall_thickness*2;
 
 etch_depth=1;
 etch_size=3;
@@ -57,7 +74,7 @@ rail_bridge_depth=0.25;
 
 label_power_offset=7;
 label_hdmi_offset=28;
-label_audio_offset=51;
+label_audio_offset=47;
 label_ethernet_offset=4;
 label_usb_offset=35;
 label_dash1_adjust=12;
@@ -169,14 +186,14 @@ module rpi3bplus(camera_hole=false) {
     union() {
         difference() {
             cube([
-                rpi_bounding_length+wall_thickness*2,
-                rpi_bounding_width+wall_thickness*2,
+                case_length,
+                case_width,
                 case_height
             ]);
 
-            translate([wall_thickness,wall_thickness,wall_thickness])
             union() {
-                cube([rpi_bounding_length, rpi_bounding_width, rpi_bounding_height]);
+                translate([wall_thickness,wall_thickness,wall_thickness])
+                cube([case_int_length, case_int_width, case_int_height]);
 
                 // translate([rpi_screw_origin_length,rpi_screw_origin_width,0])
                 // union() {
@@ -186,12 +203,12 @@ module rpi3bplus(camera_hole=false) {
                 //     translate([rpi_screw_offset_length,rpi_screw_offset_width,0]) m2_5_screw_hole();
                 // }
 
-                translate([0,0,m2_5_spacer_height+rpi_pcb_thickness])
+                translate([rpi_origin_length,rpi_origin_width,rpi_origin_height+rpi_pcb_thickness])
                 union() {
-                    translate([rpi_bounding_length+cutout_offset,ethernet_offset,0]) ethernet();
+                    translate([case_int_length-rpi_origin_length,ethernet_offset,0]) ethernet();
 
-                    translate([rpi_bounding_length+cutout_offset,usb1_offset,0]) usb();
-                    translate([rpi_bounding_length+cutout_offset,usb2_offset,0]) usb();
+                    translate([case_int_length-rpi_origin_length,usb1_offset,0]) usb();
+                    translate([case_int_length-rpi_origin_length,usb2_offset,0]) usb();
 
                     translate([audio_jack_offset,0,0]) audio_jack();
 
@@ -206,8 +223,8 @@ module rpi3bplus(camera_hole=false) {
                 }
 
                 translate([
-                    rpi_screw_origin_length,
-                    rpi_screw_origin_width,
+                    rpi_origin_length+rpi_screw_origin_length,
+                    rpi_origin_width+rpi_screw_origin_width,
                     case_height
                 ])
                 union() {
@@ -221,9 +238,11 @@ module rpi3bplus(camera_hole=false) {
             translate([0,0,case_height-etch_depth])
             union() {
                 linear_extrude(height=etch_depth+1) {
-                    translate([etch_edge_offset+label_power_offset,etch_edge_offset,0]) text("Power", size=etch_size);
-                    translate([etch_edge_offset+label_hdmi_offset,etch_edge_offset,0]) text("HDMI", size=etch_size);
-                    translate([etch_edge_offset+label_audio_offset,etch_edge_offset,0]) text("Audio", size=etch_size);
+                    translate([rpi_origin_length+etch_edge_offset,etch_edge_offset,0]) {
+                        translate([label_power_offset,0,0]) text("Power", size=etch_size);
+                        translate([label_hdmi_offset,0,0]) text("HDMI", size=etch_size);
+                        translate([label_audio_offset,0,0]) text("Audio", size=etch_size);
+                    }
 
                     if (camera_hole) {
                         translate([etch_edge_offset+label_camera_offset,etch_edge_offset+label_camera_edge_offset,0])
@@ -231,20 +250,21 @@ module rpi3bplus(camera_hole=false) {
                         text("Camera", size=etch_size);
                     }
 
-                    translate([rpi_bounding_length+wall_thickness*2,0,0])
+                    translate([case_length,0,0])
                     union() {
-                        translate([-etch_edge_offset,etch_edge_offset+label_ethernet_offset,0])
-                        rotate([0,0,90])
-                        text("Ethernet", size=etch_size);
+                        translate([-etch_edge_offset,etch_edge_offset,0]) {
+                            translate([0,label_ethernet_offset,0])
+                            rotate([0,0,90])
+                            text("Ethernet", size=etch_size);
 
-                        translate([-etch_edge_offset,etch_edge_offset+label_usb_offset,0])
-                        rotate([0,0,90])
-                        text("USB", size=etch_size);
+                            translate([0,label_usb_offset,0])
+                            rotate([0,0,90])
+                            text("USB", size=etch_size);
 
-                        translate([-etch_edge_offset,etch_edge_offset,0])
-                        union() {
-                            translate([-label_dash_raise,label_usb_offset-label_dash1_adjust,0]) square([1,10]);
-                            translate([-label_dash_raise,label_usb_offset+label_dash2_adjust,0]) square([1,10]);
+                            union() {
+                                translate([-label_dash_raise,label_usb_offset-label_dash1_adjust,0]) square([1,10]);
+                                translate([-label_dash_raise,label_usb_offset+label_dash2_adjust,0]) square([1,10]);
+                            }
                         }
                     }
                 }
@@ -252,8 +272,8 @@ module rpi3bplus(camera_hole=false) {
         }
 
         translate([
-            rpi_screw_origin_length+wall_thickness,
-            rpi_screw_origin_width+wall_thickness,
+            rpi_screw_origin_length+rpi_origin_length,
+            rpi_screw_origin_width+rpi_origin_width,
             wall_thickness
         ])
         union() {
@@ -265,14 +285,14 @@ module rpi3bplus(camera_hole=false) {
 
         // Special bridging for the camera hole
         if (camera_hole) {
-            translate([wall_thickness+camera_length_offset-rail_width,0,case_height-wall_thickness-rail_depth])
+            translate([rpi_origin_length+camera_length_offset-rail_width,0,case_height-wall_thickness-rail_depth])
             camera_rails();
         }
 
         // Special bridging for the screw driver holes
-        translate([0,0,case_height-wall_thickness-rail_depth]) {
-            #translate([rpi_screw_origin_length,0,0]) screw_driver_hole_rails();
-            #translate([rpi_screw_origin_length+rpi_screw_offset_length,0,0]) screw_driver_hole_rails();
+        translate([rpi_origin_length-wall_thickness,0,case_height-wall_thickness-rail_depth]) {
+            translate([rpi_screw_origin_length,0,0]) screw_driver_hole_rails();
+            translate([rpi_screw_origin_length+rpi_screw_offset_length,0,0]) screw_driver_hole_rails();
         }
     }
 }
