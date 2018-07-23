@@ -26,6 +26,8 @@ m2_5_screw_width=2.5;
 m2_5_spacer_width=m2_5_screw_width*2;
 m2_5_spacer_height=5;
 
+screw_driver_width=4;
+
 rpi_below_board=5;
 rpi_pcb_thickness=2;
 rpi_above_board=18;
@@ -116,6 +118,10 @@ module m2_5_screw_hole() {
     cylinder(d=m2_5_screw_width,h=cutout_depth,$fn=10,center=true);
 }
 
+module screw_driver_hole() {
+    cylinder(d=screw_driver_width,h=cutout_depth*2,$fn=10,center=true);
+}
+
 module m2_5_spacer() {
     translate([0,0,m2_5_spacer_height/2])
     difference() {
@@ -162,6 +168,19 @@ module rpi3bplus(camera_hole=false) {
                         translate([camera_length_offset,camera_width_offset,case_height/2])
                         camera();
                     }
+
+                }
+
+                translate([
+                    rpi_screw_origin_length,
+                    rpi_screw_origin_width,
+                    case_height
+                ])
+                union() {
+                    translate([0,0,0]) screw_driver_hole();
+                    translate([0,rpi_screw_offset_width,0]) screw_driver_hole();
+                    translate([rpi_screw_offset_length,0,0]) screw_driver_hole();
+                    translate([rpi_screw_offset_length,rpi_screw_offset_width,0]) screw_driver_hole();
                 }
             }
 
