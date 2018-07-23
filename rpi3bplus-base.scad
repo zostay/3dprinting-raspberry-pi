@@ -51,6 +51,10 @@ etch_depth=1;
 etch_size=3;
 etch_edge_offset=2;
 
+rail_depth=0.5;
+rail_width=2;
+rail_bridge_depth=0.25;
+
 label_power_offset=7;
 label_hdmi_offset=28;
 label_audio_offset=51;
@@ -72,6 +76,16 @@ function case_dimensions() = [case_length,case_width,case_height];
 
 module camera() {
     cube([camera_cable_thickness,camera_cable_width,cutout_depth]);
+}
+
+module camera_rails() {
+    cube([rail_width,case_width,rail_depth]);
+    translate([camera_cable_thickness+rail_width,0,0]) cube([rail_width,case_width,rail_depth]);
+    difference() {
+        translate([0,0,rail_depth-rail_bridge_depth]) cube([camera_cable_thickness+rail_width*2,case_width,rail_bridge_depth]);
+        translate([rail_width,wall_thickness+camera_width_offset,0])
+        camera();
+    }
 }
 
 module ethernet() {
@@ -229,6 +243,11 @@ module rpi3bplus(camera_hole=false) {
             translate([0,rpi_screw_offset_width,0]) m2_5_spacer();
             translate([rpi_screw_offset_length,0,0]) m2_5_spacer();
             translate([rpi_screw_offset_length,rpi_screw_offset_width,0]) m2_5_spacer();
+        }
+
+        if (camera_hole) {
+            #translate([wall_thickness+camera_length_offset-rail_width,0,case_height-wall_thickness-rail_depth])
+            camera_rails();
         }
     }
 }
