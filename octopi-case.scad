@@ -16,7 +16,7 @@ tab_depth=5;
 socket_thickness=1;
 socket_depth=5;
 
-socket_join_fudge=0.2;
+socket_join_fudge=0.4;
 
 attachment_height=2;
 attachment_length=5;
@@ -106,10 +106,11 @@ module hanger() {
     difference() {
         cube([hanger_hook_height,hanger_hook_width+wall_thickness,hanger_hook_depth+wall_thickness]);
 
-        translate([wall_thickness,0,0]) cube([hanger_hook_height,hanger_hook_width,hanger_hook_depth]);
+        translate([wall_thickness,0,0])
+        cube([hanger_hook_height,hanger_hook_width,hanger_hook_depth]);
     }
 
-    cube([wall_thickness+hanger_hook_clip_depth,hanger_hook_width,hanger_hook_clip_thickness]);
+    cube([wall_thickness+hanger_hook_clip_depth,hanger_hook_width,hanger_hook_clip_thickness-socket_join_fudge]);
 }
 
 union() {

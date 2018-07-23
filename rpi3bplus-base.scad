@@ -42,7 +42,7 @@ rpi_screw_origin_width=4;
 rpi_screw_offset_length=58;
 rpi_screw_offset_width=49;
 
-wall_thickness=3;
+wall_thickness=4;
 case_length=rpi_bounding_length+wall_thickness*2;
 case_width=rpi_bounding_width+wall_thickness*2;
 case_height=rpi_bounding_height+wall_thickness*2;
@@ -270,7 +270,7 @@ module rpi3bplus(camera_hole=false) {
         }
 
         // Special bridging for the screw driver holes
-        translate([-rail_width/2,0,case_height-wall_thickness-rail_depth]) {
+        translate([0,0,case_height-wall_thickness-rail_depth]) {
             #translate([rpi_screw_origin_length,0,0]) screw_driver_hole_rails();
             #translate([rpi_screw_origin_length+rpi_screw_offset_length,0,0]) screw_driver_hole_rails();
         }
