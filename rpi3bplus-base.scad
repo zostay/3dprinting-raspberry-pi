@@ -1,6 +1,8 @@
 cutout_depth=10;
 cutout_offset=-cutout_depth/2;
 
+sdc_overhang=3; // actual overhang is 2.6
+
 ethernet_width=16;
 ethernet_height=13.5;
 ethernet_offset=2.5;
@@ -32,10 +34,10 @@ rpi_below_board=5;
 rpi_pcb_thickness=2;
 rpi_above_board=18;
 rpi_bounding_height=rpi_below_board+rpi_above_board+rpi_pcb_thickness;
-rpi_bounding_length=87;
+rpi_bounding_length=87+sdc_overhang;
 rpi_bounding_width=58;
 
-rpi_screw_origin_length=4;
+rpi_screw_origin_length=4+sdc_overhang;
 rpi_screw_origin_width=4;
 rpi_screw_offset_length=58;
 rpi_screw_offset_width=49;
