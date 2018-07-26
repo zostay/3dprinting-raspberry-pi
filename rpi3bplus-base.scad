@@ -13,12 +13,12 @@ usb1_offset=21.5;
 usb2_offset=39.5;
 
 hdmi_angle_width=2;
-hdmi_width=15;
-hdmi_height=5.5;
+hdmi_width=15.75;
+hdmi_height=6.5;
 hdmi_offset=25;
 
-micro_usb_width=8;
-micro_usb_height=3;
+micro_usb_width=8.75;
+micro_usb_height=3.5;
 micro_usb_offset=7.5;
 
 screw_driver_width=4;
@@ -47,6 +47,20 @@ rpi_origin_height=wall_thickness+rpi_below_board;
 
 function rpi_origin() = [rpi_origin_length,rpi_origin_width,rpi_origin_height];
 
+side_plate_actual_width=audio_jack_offset-micro_usb_offset+audio_jack_width/2;
+side_plate_width=1.2*side_plate_actual_width;
+side_plate_depth=wall_thickness-1;
+side_plate_height=2*max(micro_usb_height, hdmi_height, audio_jack_width);
+side_plate_offset_length=rpi_origin_length+micro_usb_width-(side_plate_width-side_plate_actual_width)/2;
+side_plate_offset_height=rpi_origin_height-1.5;
+
+back_plate_actual_width=usb2_offset+usb_width-ethernet_offset;
+back_plate_width=back_plate_actual_width*1.1;
+back_plate_depth=wall_thickness-1;
+back_plate_height=1.2*max(usb_height, ethernet_height);
+back_plate_offset_width=rpi_origin_width+ethernet_offset-(back_plate_width-back_plate_actual_width)/2;
+back_plate_offset_height=rpi_origin_height+0.5;
+
 m2_5_screw_width=2.5;
 m2_5_spacer_width=m2_5_screw_width*2;
 m2_5_spacer_height=rpi_origin_height-wall_thickness;
@@ -72,16 +86,16 @@ rail_depth=0.5;
 rail_width=2;
 rail_bridge_depth=0.25;
 
-label_power_offset=7;
-label_hdmi_offset=28;
+label_power_offset=2;
+label_hdmi_offset=25;
 label_audio_offset=47;
-label_ethernet_offset=4;
+label_ethernet_offset=9;
 label_usb_offset=35;
 label_dash1_adjust=12;
 label_dash2_adjust=10;
 label_dash_raise=1.5;
 label_camera_offset=42;
-label_camera_edge_offset=6.5;
+label_camera_edge_offset=5.25;
 
 camera_cable_width=20;
 camera_cable_thickness=4;
@@ -222,6 +236,9 @@ module rpi3bplus(camera_hole=false) {
                     }
                 }
 
+                translate([side_plate_offset_length,0,side_plate_offset_height]) cube([side_plate_width,side_plate_depth,side_plate_height]);
+                #translate([case_length-back_plate_depth,back_plate_offset_width,back_plate_offset_height]) cube([back_plate_depth,back_plate_width,back_plate_height]);
+
                 translate([
                     rpi_origin_length+rpi_screw_origin_length,
                     rpi_origin_width+rpi_screw_origin_width,
@@ -239,15 +256,15 @@ module rpi3bplus(camera_hole=false) {
             union() {
                 linear_extrude(height=etch_depth+1) {
                     translate([rpi_origin_length+etch_edge_offset,etch_edge_offset,0]) {
-                        translate([label_power_offset,0,0]) text("Power", size=etch_size);
+                        translate([label_power_offset,0,0]) text("POWER", size=etch_size);
                         translate([label_hdmi_offset,0,0]) text("HDMI", size=etch_size);
-                        translate([label_audio_offset,0,0]) text("Audio", size=etch_size);
+                        translate([label_audio_offset,0,0]) text("AUDIO", size=etch_size);
                     }
 
                     if (camera_hole) {
                         translate([rpi_origin_length-wall_thickness+etch_edge_offset+label_camera_offset,etch_edge_offset+label_camera_edge_offset,0])
                         rotate([0,0,90])
-                        text("Camera", size=etch_size);
+                        text("CAMERA", size=etch_size);
                     }
 
                     translate([case_length,0,0])
@@ -255,7 +272,7 @@ module rpi3bplus(camera_hole=false) {
                         translate([-etch_edge_offset,etch_edge_offset,0]) {
                             translate([0,label_ethernet_offset,0])
                             rotate([0,0,90])
-                            text("Ethernet", size=etch_size);
+                            text("ETH", size=etch_size);
 
                             translate([0,label_usb_offset,0])
                             rotate([0,0,90])

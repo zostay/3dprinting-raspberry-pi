@@ -77,7 +77,7 @@ module rpi3bplus_main_body() {
 
 module rpi3bplus_lid() {
     module tab() {
-        translate([wall_thickness,(wall_thickness-socket_thickness)/2+socket_join_fudge,0])
+        translate([perforation_length_offset,(wall_thickness-socket_thickness)/2,0])
         cube([socket_depth,socket_thickness,case_height-wall_thickness/2-socket_join_fudge]);
     }
 
