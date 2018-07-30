@@ -61,7 +61,8 @@ back_plate_height=1.2*max(usb_height, ethernet_height);
 back_plate_offset_width=rpi_origin_width+ethernet_offset-(back_plate_width-back_plate_actual_width)/2;
 back_plate_offset_height=rpi_origin_height+0.5;
 
-m2_5_screw_width=2.5;
+// 2.6 because 2.5 is just a touch too small
+m2_5_screw_width=2.6;
 m2_5_spacer_width=m2_5_screw_width*2;
 m2_5_spacer_height=rpi_origin_height-wall_thickness;
 
