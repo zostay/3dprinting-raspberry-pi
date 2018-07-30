@@ -69,7 +69,7 @@ case_int_length=rpi_bounding_length+extra_length;
 case_int_width=rpi_bounding_width+extra_width;
 case_int_height=rpi_bounding_height+extra_height;
 
-rpi_screw_origin_length=4+sdc_overhang;
+rpi_screw_origin_length=2+sdc_overhang;
 rpi_screw_origin_width=4;
 rpi_screw_offset_length=58;
 rpi_screw_offset_width=49;
@@ -237,7 +237,7 @@ module rpi3bplus(camera_hole=false) {
                 }
 
                 translate([side_plate_offset_length,0,side_plate_offset_height]) cube([side_plate_width,side_plate_depth,side_plate_height]);
-                #translate([case_length-back_plate_depth,back_plate_offset_width,back_plate_offset_height]) cube([back_plate_depth,back_plate_width,back_plate_height]);
+                translate([case_length-back_plate_depth,back_plate_offset_width,back_plate_offset_height]) cube([back_plate_depth,back_plate_width,back_plate_height]);
 
                 translate([
                     rpi_origin_length+rpi_screw_origin_length,

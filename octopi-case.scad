@@ -29,16 +29,18 @@ hanger_hook_clip_thickness=hook_backplate_dimensions().z - hook_backplate_hook_d
 hanger_hook_clip_depth=hook_backplate_hook_dimensions().x;
 
 module case_split(join_fudge) {
-    module upright_triangle_cutout() {
-        translate([0,wall_thickness,wall_thickness])
+    module upright_triangle(thickness = wall_thickness) {
         rotate([90,0,0])
-        linear_extrude(height=wall_thickness)
+        linear_extrude(height=thickness)
         polygon([
-            [0,0],[perforation_triangle_bits,0],[perforation_triangle_bits,join_fudge],[0,perforation_triangle_bits+join_fudge]
+            [0,0],
+            [perforation_triangle_bits,0],
+            [perforation_triangle_bits,join_fudge],
+            [0,perforation_triangle_bits+join_fudge]
         ]);
     }
 
-    module socket_cutout(join_fudge) {
+    module socket_cutout() {
         translate([0,(wall_thickness-socket_thickness-join_fudge*2)/2,0])
         cube([socket_depth+join_fudge,socket_thickness+join_fudge*2,case_height-wall_thickness/2]);
     }
@@ -49,8 +51,14 @@ module case_split(join_fudge) {
         union() {
             cube([perforation_triangle_bits,case_width,wall_thickness]);
 
-            upright_triangle_cutout();
-            translate([0,case_width-wall_thickness,0]) upright_triangle_cutout();
+            translate([0,0,wall_thickness]) {
+                translate([0,wall_thickness,0]) upright_triangle();
+                translate([0,case_width,0]) upright_triangle();
+            }
+
+            translate([0,case_width,case_height+0.001])
+            mirror([0,0,1])
+            upright_triangle(case_width, join_fudge);
 
             socket_cutout(join_fudge);
             translate([0,case_width-wall_thickness,0]) socket_cutout(join_fudge);
@@ -83,7 +91,7 @@ module rpi3bplus_lid() {
 
     difference() {
         rpi3bplus();
-        translate([perforation_length_offset,0,0]) case_split();
+        translate([perforation_length_offset,0,0]) case_split(0);
     }
 
     tab();
@@ -98,13 +106,13 @@ module rpi3bplus_lid() {
         ]);
     }
 
-    translate([0,case_width/3+attachment_width,case_height])
-    rotate([90,0,0])
-    attachment();
+    // translate([0,case_width/3+attachment_width,case_height])
+    // rotate([90,0,0])
+    // attachment();
 
-    translate([0,2*case_width/3+attachment_width,case_height])
-    rotate([90,0,0])
-    attachment();
+    // translate([0,2*case_width/3+attachment_width,case_height])
+    // rotate([90,0,0])
+    // attachment();
 
 }
 
