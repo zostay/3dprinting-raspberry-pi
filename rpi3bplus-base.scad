@@ -25,7 +25,7 @@ screw_driver_width=4;
 
 extra_length=10;
 extra_width=10;
-extra_height=0;
+extra_height=2;
 
 function extra_dimensions() = [extra_length,extra_width,extra_height];
 
