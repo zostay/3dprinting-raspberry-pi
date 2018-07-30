@@ -84,7 +84,7 @@ etch_size=3;
 etch_edge_offset=2;
 
 rail_depth=0.5;
-rail_width=2;
+rail_width=3;
 rail_bridge_depth=0.25;
 
 label_power_offset=2;
